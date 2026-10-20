@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rick and Morty Akinator - Início</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="icon" type="image/png" th:href="@{/images/perguntas.png}">
+</head>
+<body>
+
+    <header>
+        <a th:href="@{/}" class="logo-container">
+            <img th:src="@{/images/perguntas.png}" alt="Logo" class="logo-img">
+            <div>
+                <div class="font-rick logo-title">Rick & Morty</div>
+                <div class="logo-sub">Akinator Simplificado</div>
+            </div>
+        </a>
+        <nav>
+            <a th:href="@{/}" class="active">Início</a>
+            <a th:href="@{/jogar}">Jogar Agora</a>
+            <a th:href="@{/registros}">Registros (CRUD)</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <!-- Mensagem de erro caso a API falhe -->
+        <div th:if="${erro}" class="alert alert-danger" th:text="${erro}"></div>
+
+        <div class="home-grid">
+            <!-- Coluna da Esquerda: Textos e Botão Iniciar -->
+            <div class="card-intro">
+                <h1>Adivinhe o <span class="font-rick" style="color: #A2E8DD;">Personagem</span>!</h1>
+                <p>
+                    Bem-vindo ao Akinator simplificado do multiverso de Rick and Morty!
+                    O sistema sorteia um personagem aleatório da API oficial e oferece pistas progressivas.
+                    Seu objetivo é descobrir quem é o personagem antes de esgotar suas tentativas.
+                </p>
+
+                <div class="regras-box">
+                    <h3>Regras da Partida:</h3>
+                    <ul>
+                        <li>O sistema sorteia um personagem aleatório da Rick and Morty API.</li>
+                        <li>Você recebe pistas sobre status, espécie, gênero, dimensão e episódios.</li>
+                        <li>Você tem <strong>5 tentativas</strong> para acertar o nome.</li>
+                        <li>A validação ignora letras maiúsculas, minúsculas e acentos.</li>
+                        <li>Ao acertar: vitória (<em>"Boa NERDOLA"</em>). Ao errar todas: derrota (<em>"you suck"</em>).</li>
+                    </ul>
+                </div>
+
+                <div style="display: flex; gap: 15px; align-items: center;">
+                    <a th:href="@{/jogar}" class="btn btn-primary" style="font-size: 18px; padding: 14px 32px;">
+                        ► Iniciar Partida
+                    </a>
+                    <a th:href="@{/registros}" class="btn btn-outline">
+                        Ver Banco de Registros
+                    </a>
+                </div>
+            </div>
+
+            <!-- Coluna da Direita: Imagem animada homePage.gif -->
+            <div class="hero-img-box">
+                <img th:src="@{/images/homePage.gif}" alt="Rick and Morty Home">
+                <div style="margin-top: 10px; font-size: 12px; color: #A2E8DD;">
+                    Consumindo dados em tempo real da <strong>rickandmortyapi.com</strong>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>Projeto de POO - 3º Bimestre - IFPR Campus Cascavel | Consumo de API Externa e Thymeleaf</p>
+    </footer>
+
+</body>
+</html>

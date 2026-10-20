@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rick and Morty - Banco de Registros (CRUD JPA)</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="icon" type="image/png" th:href="@{/images/perguntas.png}">
+</head>
+<body>
+
+    <header>
+        <a th:href="@{/}" class="logo-container">
+            <img th:src="@{/images/perguntas.png}" alt="Logo" class="logo-img">
+            <div>
+                <div class="font-rick logo-title">Rick & Morty</div>
+                <div class="logo-sub">Akinator Simplificado</div>
+            </div>
+        </a>
+        <nav>
+            <a th:href="@{/}">Início</a>
+            <a th:href="@{/jogar}">Jogar Partida</a>
+            <a th:href="@{/registros}" class="active">Registros (CRUD)</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <!-- Mensagens Flash -->
+        <div th:if="${mensagemSucesso}" class="alert alert-success" th:text="${mensagemSucesso}"></div>
+        <div th:if="${mensagemErro}" class="alert alert-danger" th:text="${mensagemErro}"></div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+            <div>
+                <h1 style="color: #A2E8DD; font-size: 28px;">Gerenciamento de Registros (CRUD)</h1>
+                <p style="color: #aaa; font-size: 14px;">Persistência em Banco de Dados H2 com Spring Data JPA (Avaliação 3º Bimestre POO)</p>
+            </div>
+            <a th:href="@{/jogar}" class="btn btn-primary">► Nova Partida</a>
+        </div>
+
+        <!-- Formulário de Cadastro / Edição de Registro -->
+        <div style="background-color: #1a1c22; border: 2px solid #22A2C4; border-radius: 12px; padding: 25px; margin-bottom: 35px;">
+            <h3 style="color: #A2E8DD; margin-bottom: 15px;"
+                th:text="${partidaEdicao != null} ? 'Editar Registro #' + ${partidaEdicao.id} : 'Cadastrar Novo Registro'">
+                Cadastrar Novo Registro
+            </h3>
+
+            <form th:action="@{/registros/salvar}" method="post">
+                <!-- ID Oculto para Edição -->
+                <input type="hidden" name="id" th:value="${partidaEdicao != null ? partidaEdicao.id : null}">
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 15px;">
+                    <div>
+                        <label style="display: block; font-size: 13px; color: #ccc; margin-bottom: 5px;">Nome do Personagem *</label>
+                        <input type="text" name="nomePersonagem" class="input-palpite" style="width: 100%;"
+                               th:value="${partidaEdicao != null ? partidaEdicao.nomePersonagem : ''}" placeholder="Ex: Rick Sanchez" required>
+                    </div>
+
+                    <div>
+                        <label style="display: block; font-size: 13px; color: #ccc; margin-bottom: 5px;">URL da Imagem</label>
+                        <input type="text" name="imagemPersonagem" class="input-palpite" style="width: 100%;"
+                               th:value="${partidaEdicao != null ? partidaEdicao.imagemPersonagem : ''}" placeholder="https://rickandmortyapi.com/api/character/avatar/1.jpeg">
+                    </div>
+
+                    <div>
+                        <label style="display: block; font-size: 13px; color: #ccc; margin-bottom: 5px;">Resultado</label>
+                        <select name="statusResultado" class="input-palpite" style="width: 100%;">
+                            <option value="Vitória" th:selected="${partidaEdicao != null && partidaEdicao.statusResultado == 'Vitória'}">Vitória</option>
+                            <option value="Derrota" th:selected="${partidaEdicao != null && partidaEdicao.statusResultado == 'Derrota'}">Derrota</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label style="display: block; font-size: 13px; color: #ccc; margin-bottom: 5px;">Tentativas Usadas</label>
+                        <input type="number" name="tentativasUsadas" min="1" max="10" class="input-palpite" style="width: 100%;"
+                               th:value="${partidaEdicao != null ? partidaEdicao.tentativasUsadas : 1}">
+                    </div>
+
+                    <div>
+                        <label style="display: block; font-size: 13px; color: #ccc; margin-bottom: 5px;">Pistas Usadas</label>
+                        <input type="number" name="pistasUsadas" min="1" max="10" class="input-palpite" style="width: 100%;"
+                               th:value="${partidaEdicao != null ? partidaEdicao.pistasUsadas : 1}">
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; font-size: 13px; color: #ccc; margin-bottom: 5px;">Observações</label>
+                    <input type="text" name="observacao" class="input-palpite" style="width: 100%;"
+                           th:value="${partidaEdicao != null ? partidaEdicao.observacao : ''}" placeholder="Ex: Jogador acertou através da pista de espécie...">
+                </div>
+
+                <div style="display: flex; gap: 10px;">
+                    <button type="submit" class="btn btn-primary" th:text="${partidaEdicao != null ? '💾 Atualizar Registro' : '➕ Cadastrar Registro'}">
+                        Cadastrar Registro
+                    </button>
+                    <a th:if="${partidaEdicao != null}" th:href="@{/registros}" class="btn btn-outline">Cancelar Edição</a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Tabela de Listagem de Registros (R - Read) -->
+        <h2 style="color: #A2E8DD; font-size: 20px; margin-bottom: 10px;">Registros Persistidos no Banco</h2>
+
+        <div th:if="${#lists.isEmpty(registros)}" style="text-align: center; padding: 40px; background-color: #1a1c22; border-radius: 12px; color: #777;">
+            Nenhum registro encontrado no banco de dados. Jogue uma partida ou cadastre acima!
+        </div>
+
+        <table th:unless="${#lists.isEmpty(registros)}" class="tabela-registros">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Personagem</th>
+                    <th>Resultado</th>
+                    <th>Tentativas</th>
+                    <th>Pistas</th>
+                    <th>Observação</th>
+                    <th>Data</th>
+                    <th style="text-align: right;">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="r : ${registros}">
+                    <td th:text="'#' + ${r.id}"></td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <img th:if="${r.imagemPersonagem != null}" th:src="${r.imagemPersonagem}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
+                            <span th:text="${r.nomePersonagem}" style="font-weight: 600;"></span>
+                        </div>
+                    </td>
+                    <td>
+                        <span th:if="${r.statusResultado == 'Vitória'}" class="badge-vitoria">✔ Vitória</span>
+                        <span th:unless="${r.statusResultado == 'Vitória'}" class="badge-derrota">✖ Derrota</span>
+                    </td>
+                    <td th:text="${r.tentativasUsadas}"></td>
+                    <td th:text="${r.pistasUsadas}"></td>
+                    <td th:text="${r.observacao != null && !r.observacao.isEmpty() ? r.observacao : '-'}"></td>
+                    <td th:text="${r.dataFormatada}" style="color: #888; font-size: 12px;"></td>
+                    <td style="text-align: right;">
+                        <a th:href="@{/registros/editar/{id}(id=${r.id})}" class="btn btn-secondary" style="padding: 4px 10px; font-size: 12px;">
+                            Editar
+                        </a>
+                        <a th:href="@{/registros/excluir/{id}(id=${r.id})}"
+                           onclick="return confirm('Tem certeza que deseja excluir este registro?');"
+                           class="btn btn-danger" style="padding: 4px 10px; font-size: 12px; margin-left: 5px;">
+                            Excluir
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </main>
+
+    <footer>
+        <p>Projeto de POO - 3º Bimestre - IFPR Campus Cascavel</p>
+    </footer>
+
+</body>
+</html>

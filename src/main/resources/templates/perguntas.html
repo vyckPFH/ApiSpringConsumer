@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rick and Morty Akinator - Partida em Andamento</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="icon" type="image/png" th:href="@{/images/perguntas.png}">
+</head>
+<body>
+
+    <header>
+        <a th:href="@{/}" class="logo-container">
+            <img th:src="@{/images/perguntas.png}" alt="Logo" class="logo-img">
+            <div>
+                <div class="font-rick logo-title">Rick & Morty</div>
+                <div class="logo-sub">Akinator Simplificado</div>
+            </div>
+        </a>
+        <nav>
+            <a th:href="@{/}">Início</a>
+            <a th:href="@{/perguntas}" class="active">Partida</a>
+            <a th:href="@{/registros}">Registros</a>
+            <a th:href="@{/desistir}" style="color: #e74c3c;">Desistir</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <!-- Barra de Status do Jogo -->
+        <div class="game-status-bar">
+            <div class="tentativas-box">
+                <span style="font-size: 13px; text-transform: uppercase; color: #888;">Tentativas Restantes:</span>
+                <span th:each="i : ${#numbers.sequence(1, totalTentativas)}" class="coracao">
+                    <span th:if="${i <= tentativasRestantes}">❤️</span>
+                    <span th:unless="${i <= tentativasRestantes}" style="filter: grayscale(100%); opacity: 0.3;">🖤</span>
+                </span>
+                <strong th:text="${tentativasRestantes} + ' de ' + ${totalTentativas}"></strong>
+            </div>
+
+            <div>
+                <span style="font-size: 13px; text-transform: uppercase; color: #888;">Pistas Reveladas:</span>
+                <span style="background-color: #22A2C4; color: #fff; padding: 4px 10px; border-radius: 12px; font-weight: bold; font-size: 13px;"
+                      th:text="${pistasReveladas.size()}"></span>
+            </div>
+
+            <div>
+                <a th:href="@{/desistir}" class="btn btn-outline" style="font-size: 12px; padding: 6px 14px; border-color: #e74c3c; color: #e74c3c;">
+                    Desistir
+                </a>
+            </div>
+        </div>
+
+        <!-- Mensagens de Feedback -->
+        <div th:if="${mensagemAviso}" class="alert alert-warning" th:text="${mensagemAviso}"></div>
+
+        <div class="home-grid">
+            <!-- Coluna da Esquerda: Container da Pista Atual e Formulário de Palpite -->
+            <div>
+                <!-- Container da Pista em Destaque (#22A2C4) -->
+                <div class="pista-container">
+                    <span class="pista-badge" th:text="'Pista #' + ${pistasReveladas.size()} + ' • ' + ${pistaAtual.tipo}">Pista</span>
+                    <div class="pista-texto" th:text="'&quot;' + ${pistaAtual.descricao} + '&quot;'">
+                        Descrição da pista...
+                    </div>
+                </div>
+
+                <!-- Formulário para Envio do Palpite -->
+                <div style="background-color: #1a1c22; border: 1px solid #22A2C4; border-radius: 12px; padding: 25px; margin-bottom: 25px;">
+                    <h3 style="margin-bottom: 12px; color: #A2E8DD;">Quem é esse personagem?</h3>
+                    <form th:action="@{/palpite}" method="post" class="form-palpite">
+                        <input type="text" name="palpite" class="input-palpite" placeholder="Ex: Rick Sanchez, Morty, Birdperson..." autofocus required>
+                        <button type="submit" class="btn btn-primary">Chutar!</button>
+                    </form>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; font-size: 13px;">
+                        <span style="color: #888;">Acentos e maiúsculas/minúsculas não interferem.</span>
+                        <a th:if="${temMaisPistas}" th:href="@{/pedir-pista}" style="color: #A2E8DD; text-decoration: underline;">
+                            💡 Pedir próxima dica sem chutar
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Histórico de Pistas Reveladas -->
+                <div style="background-color: #1a1c22; border: 1px solid #2a2e38; border-radius: 12px; padding: 20px;">
+                    <h4 style="color: #A2E8DD; margin-bottom: 10px; font-size: 14px; text-transform: uppercase;">
+                        Todas as Pistas Liberadas
+                    </h4>
+                    <ul style="list-style: none; font-size: 13px; line-height: 1.8;">
+                        <li th:each="p, iter : ${pistasReveladas}" style="border-bottom: 1px solid #2a2e38; padding: 6px 0;">
+                            <strong style="color: #22A2C4;" th:text="'#' + ${iter.count} + ' [' + ${p.tipo} + ']: '"></strong>
+                            <span th:text="${p.descricao}"></span>
+                        </li>
+                    </ul>
+
+                    <!-- Palpites Errados -->
+                    <div th:if="${!palpitesErrados.isEmpty()}" style="margin-top: 15px;">
+                        <span style="font-size: 12px; color: #e74c3c; font-weight: bold; text-transform: uppercase;">
+                            Palpites Anteriores Incorretos:
+                        </span>
+                        <div style="margin-top: 5px; display: flex; gap: 8px; flex-wrap: wrap;">
+                            <span th:each="err : ${palpitesErrados}"
+                                  style="background-color: rgba(231,76,60,0.15); border: 1px solid #e74c3c; color: #ff887b; padding: 3px 8px; border-radius: 4px; font-size: 12px; text-decoration: line-through;"
+                                  th:text="${err}"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coluna da Direita: Imagem auxiliar perguntas.png -->
+            <div class="hero-img-box">
+                <h3 class="font-rick" style="color: #A2E8DD; margin-bottom: 10px;">Quem e esse Personagem?</h3>
+                <img th:src="@{/images/perguntas.png}" alt="Perguntas Rick and Morty" style="max-height: 380px; object-fit: contain;">
+                <p style="margin-top: 12px; font-size: 13px; color: #97CE4C;">
+                    Pense bem antes de cada tentativa!
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>Projeto de POO - 3º Bimestre - IFPR Campus Cascavel</p>
+    </footer>
+
+</body>
+</html>

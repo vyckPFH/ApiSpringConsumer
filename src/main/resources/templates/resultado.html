@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rick and Morty Akinator - Resultado da Partida</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="icon" type="image/png" th:href="@{/images/perguntas.png}">
+</head>
+<body>
+
+    <header>
+        <a th:href="@{/}" class="logo-container">
+            <img th:src="@{/images/perguntas.png}" alt="Logo" class="logo-img">
+            <div>
+                <div class="font-rick logo-title">Rick & Morty</div>
+                <div class="logo-sub">Akinator Simplificado</div>
+            </div>
+        </a>
+        <nav>
+            <a th:href="@{/}">Início</a>
+            <a th:href="@{/jogar}">Nova Partida</a>
+            <a th:href="@{/registros}">Registros</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <!-- Mensagem de Sucesso ou Erro Flash -->
+        <div th:if="${mensagemSucesso}" class="alert alert-success" th:text="${mensagemSucesso}"></div>
+        <div th:if="${mensagemErro}" class="alert alert-danger" th:text="${mensagemErro}"></div>
+
+        <div class="resultado-card">
+            <!-- Título do Resultado (Boa NERDOLA ou you suck) -->
+            <h1 class="font-rick resultado-titulo" th:text="${mensagem}">Resultado</h1>
+
+            <p style="color: #cccccc; font-size: 16px;">
+                <span th:if="${isVitoria}">Incrível! Você desvendou as pistas e acertou o personagem!</span>
+                <span th:unless="${isVitoria}">Não foi dessa vez! O multiverso venceu suas tentativas.</span>
+            </p>
+
+            <div class="resultado-midia">
+                <!-- GIF Animado Conforme o Resultado (winner.gif ou loser.gif) -->
+                <div>
+                    <img th:if="${isVitoria}" th:src="@{/images/winner.gif}" alt="Vitória" class="resultado-gif">
+                    <img th:unless="${isVitoria}" th:src="@{/images/loser.gif}" alt="Derrota" class="resultado-gif">
+                </div>
+
+                <!-- Card com Imagem e Dados Oficiais do Personagem da API -->
+                <div th:if="${personagem != null}" class="personagem-card">
+                    <img th:src="${personagem.image}" th:alt="${personagem.name}" class="personagem-img">
+                    <div>
+                        <div style="font-size: 11px; color: #A2E8DD; text-transform: uppercase;">Personagem Oculto:</div>
+                        <h2 style="color: #ffffff; font-size: 22px; margin-bottom: 8px;" th:text="${personagem.name}">Nome do Personagem</h2>
+                        <div style="font-size: 13px; color: #bbb; line-height: 1.5;">
+                            <div><strong>Espécie:</strong> <span th:text="${personagem.species}"></span></div>
+                            <div><strong>Status:</strong> <span th:text="${personagem.status}"></span></div>
+                            <div><strong>Gênero:</strong> <span th:text="${personagem.gender}"></span></div>
+                            <div th:if="${personagem.origin != null}"><strong>Origem:</strong> <span th:text="${personagem.origin.name}"></span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Formulário para Salvar Registro no Banco de Dados (JPA) -->
+            <div style="background-color: rgba(34, 162, 196, 0.1); border: 1px solid #22A2C4; border-radius: 12px; padding: 20px; margin: 25px 0; text-align: left;">
+                <h4 style="color: #A2E8DD; margin-bottom: 8px;">Salvar Partida no Banco de Dados (JPA / POO):</h4>
+                <form th:action="@{/salvar-partida}" method="post" style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <input type="text" name="observacao" class="input-palpite" placeholder="Adicione uma observação sobre a partida..." style="font-size: 14px; padding: 10px;">
+                    <button type="submit" class="btn btn-secondary">💾 Salvar no Histórico</button>
+                </form>
+            </div>
+
+            <!-- Ações -->
+            <div style="display: flex; justify-content: center; gap: 20px;">
+                <a th:href="@{/jogar}" class="btn btn-primary" style="font-size: 16px; padding: 12px 30px;">
+                    🔄 Jogar Novamente
+                </a>
+                <a th:href="@{/registros}" class="btn btn-outline">
+                    📋 Ver Banco de Registros (CRUD)
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>Projeto de POO - 3º Bimestre - IFPR Campus Cascavel</p>
+    </footer>
+
+</body>
+</html>
