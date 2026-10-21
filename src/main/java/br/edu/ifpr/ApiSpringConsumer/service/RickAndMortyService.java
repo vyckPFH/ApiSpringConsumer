@@ -1,18 +1,19 @@
 package br.edu.ifpr.ApiSpringConsumer.service;
 
-import br.edu.ifpr.ApiSpringConsumer.dto.RickAndMortyCharacterDTO;
-import br.edu.ifpr.ApiSpringConsumer.model.Pista;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import br.edu.ifpr.ApiSpringConsumer.model.Personagem;
+import br.edu.ifpr.ApiSpringConsumer.model.Pista;
+
 /**
  * Serviço responsável por consumir a API pública do Rick and Morty
- * e converter os dados brutos recebidos em pistas textuais dinâmicas.
+ * e converter os dados brutos recebidos diretamente no modelo Personagem.
  */
 @Service
 public class RickAndMortyService {
@@ -29,17 +30,17 @@ public class RickAndMortyService {
     }
 
     /**
-     * Sorteia um personagem aleatório da Rick and Morty API.
+     * Sorteia um personagem aleatório da Rick and Morty API diretamente para o modelo Personagem.
      */
-    public RickAndMortyCharacterDTO sortearPersonagem() {
+    public Personagem sortearPersonagem() {
         int idAleatorio = random.nextInt(TOTAL_PERSONAGENS) + 1;
-        return restTemplate.getForObject(API_URL, RickAndMortyCharacterDTO.class, idAleatorio);
+        return restTemplate.getForObject(API_URL, Personagem.class, idAleatorio);
     }
 
     /**
      * Converte os atributos do personagem em uma lista progressiva de pistas textuais.
      */
-    public List<Pista> gerarPistas(RickAndMortyCharacterDTO personagem) {
+    public List<Pista> gerarPistas(Personagem personagem) {
         List<Pista> pistas = new ArrayList<>();
         int numero = 1;
 

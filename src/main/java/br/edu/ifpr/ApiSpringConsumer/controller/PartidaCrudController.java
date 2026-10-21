@@ -1,7 +1,8 @@
 package br.edu.ifpr.ApiSpringConsumer.controller;
 
-import br.edu.ifpr.ApiSpringConsumer.model.Partida;
-import br.edu.ifpr.ApiSpringConsumer.repository.PartidaRepository;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,8 +12,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
-import java.util.Optional;
+import br.edu.ifpr.ApiSpringConsumer.model.Partida;
+import br.edu.ifpr.ApiSpringConsumer.repository.PartidaRepository;
 
 /**
  * Controller responsável pelo CRUD completo de registros de partidas,
@@ -23,7 +24,7 @@ public class PartidaCrudController {
 
     private final PartidaRepository partidaRepository;
 
-    @Autowired
+    @Autowired 
     public PartidaCrudController(PartidaRepository partidaRepository) {
         this.partidaRepository = partidaRepository;
     }

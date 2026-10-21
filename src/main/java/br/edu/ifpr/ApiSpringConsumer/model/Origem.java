@@ -1,13 +1,24 @@
-package br.edu.ifpr.ApiSpringConsumer.dto;
+package br.edu.ifpr.ApiSpringConsumer.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.io.Serializable;
 
+/**
+ * Modelo que representa a origem do personagem da API de Rick and Morty.
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class LocationDTO {
+public class Origem implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private String name;
     private String url;
 
-    public LocationDTO() {}
+    public Origem() {}
+
+    public Origem(String name, String url) {
+        this.name = name;
+        this.url = url;
+    }
 
     public String getName() {
         return name;

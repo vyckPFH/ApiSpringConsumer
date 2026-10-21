@@ -1,12 +1,7 @@
 package br.edu.ifpr.ApiSpringConsumer.controller;
 
-import br.edu.ifpr.ApiSpringConsumer.dto.RickAndMortyCharacterDTO;
-import br.edu.ifpr.ApiSpringConsumer.model.EstadoJogo;
-import br.edu.ifpr.ApiSpringConsumer.model.Partida;
-import br.edu.ifpr.ApiSpringConsumer.model.Pista;
-import br.edu.ifpr.ApiSpringConsumer.repository.PartidaRepository;
-import br.edu.ifpr.ApiSpringConsumer.service.RickAndMortyService;
-import jakarta.servlet.http.HttpSession;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,7 +10,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
+import br.edu.ifpr.ApiSpringConsumer.model.EstadoJogo;
+import br.edu.ifpr.ApiSpringConsumer.model.Partida;
+import br.edu.ifpr.ApiSpringConsumer.model.Personagem;
+import br.edu.ifpr.ApiSpringConsumer.model.Pista;
+import br.edu.ifpr.ApiSpringConsumer.repository.PartidaRepository;
+import br.edu.ifpr.ApiSpringConsumer.service.RickAndMortyService;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class JogoController {
@@ -23,7 +24,13 @@ public class JogoController {
     private final RickAndMortyService rickAndMortyService;
     private final PartidaRepository partidaRepository;
 
-    @Autowired
+    @Autowired/*
+    é uma anotação do Spring que indica que o construtor deve ser usado para injeção de dependência.
+    Injeção de dependência é um padrão de design que permite que uma classe receba suas dependências de forma externa, em vez de criá-las internamente.
+    Isso promove um acoplamento mais fraco entre classes e facilita a manutenção e os testes.
+    No caso do JogoController, o Spring irá automaticamente fornecer instâncias de RickAndMortyService e PartidaRepository quando criar uma instância do controlador,
+    garantindo que ele tenha acesso aos serviços necessários para funcionar corretamente
+    */
     public JogoController(RickAndMortyService rickAndMortyService, PartidaRepository partidaRepository) {
         this.rickAndMortyService = rickAndMortyService;
         this.partidaRepository = partidaRepository;
@@ -45,7 +52,7 @@ public class JogoController {
     @GetMapping("/jogar")
     public String iniciarJogo(HttpSession session, RedirectAttributes redirectAttributes) {
         try {
-            RickAndMortyCharacterDTO personagem = rickAndMortyService.sortearPersonagem();
+            Personagem personagem = rickAndMortyService.sortearPersonagem();
             List<Pista> pistas = rickAndMortyService.gerarPistas(personagem);
 
             EstadoJogo estado = new EstadoJogo(personagem, pistas);

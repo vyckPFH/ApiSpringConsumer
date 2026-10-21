@@ -1,22 +1,29 @@
-package br.edu.ifpr.ApiSpringConsumer.dto;
+package br.edu.ifpr.ApiSpringConsumer.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.io.Serializable;
 import java.util.List;
 
+/**
+ * Modelo de domínio que representa o Personagem retornado diretamente
+ * pela API pública do Rick and Morty, sem necessidade de DTO.
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class RickAndMortyCharacterDTO {
+public class Personagem implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private Long id;
     private String name;
     private String status;
     private String species;
     private String type;
     private String gender;
-    private OriginDTO origin;
-    private LocationDTO location;
+    private Origem origin;
+    private Localizacao location;
     private String image;
     private List<String> episode;
 
-    public RickAndMortyCharacterDTO() {}
+    public Personagem() {}
 
     public Long getId() {
         return id;
@@ -66,19 +73,19 @@ public class RickAndMortyCharacterDTO {
         this.gender = gender;
     }
 
-    public OriginDTO getOrigin() {
+    public Origem getOrigin() {
         return origin;
     }
 
-    public void setOrigin(OriginDTO origin) {
+    public void setOrigin(Origem origin) {
         this.origin = origin;
     }
 
-    public LocationDTO getLocation() {
+    public Localizacao getLocation() {
         return location;
     }
 
-    public void setLocation(LocationDTO location) {
+    public void setLocation(Localizacao location) {
         this.location = location;
     }
 

@@ -1,17 +1,20 @@
 package br.edu.ifpr.ApiSpringConsumer.model;
 
-import java.text.Normalizer;
+import java.text.Normalizer; /*
+  é uma classe do Java que fornece métodos para normalizar strings, ou seja,
+  transformar caracteres acentuados em suas formas básicas (por exemplo, "é" em "e") e remover diacríticos.
+  Isso é útil para comparar strings de forma consistente, independentemente de acentos ou outros sinais diacríticos.
+*/
 import java.util.ArrayList;
 import java.util.List;
 
-import br.edu.ifpr.ApiSpringConsumer.dto.RickAndMortyCharacterDTO;
 
 /**
  * estado atual do jogo rodando na RAM * 
  */
 public class EstadoJogo  { 
 
-    private RickAndMortyCharacterDTO personagem; // O personagem atual que o usuário deve adivinhar (JSON retornado pela API)
+    private Personagem personagem; // O personagem atual que o usuário deve adivinhar (JSON retornado pela API)
     private List<Pista> todasPistas = new ArrayList<>(); // pedaços de json que se tornam pistas do personagem
     private List<Pista> pistasReveladas = new ArrayList<>(); // pistas que o usuário já usou
     private int indicePistaAtual = 0; // qtd de pistas que o usuário já usou
@@ -23,7 +26,7 @@ public class EstadoJogo  {
 
     public EstadoJogo() {}
 //iniciar um jogo
-    public EstadoJogo(RickAndMortyCharacterDTO personagem, List<Pista> todasPistas) { 
+    public EstadoJogo(Personagem personagem, List<Pista> todasPistas) { 
         this.personagem = personagem;
         this.todasPistas = todasPistas;
         this.tentativasRestantes = 5;
@@ -87,7 +90,7 @@ public class EstadoJogo  {
         this.status = "DERROTA";
         this.mensagemResultado = "you suck";
     }
-
+// pega a entrada do usuario e tira tds os caracteres especiais e deixa tudo minusculo
     private String normalizar(String texto) {
         return Normalizer.normalize(texto, Normalizer.Form.NFD)
                 .replaceAll("\\p{M}", "")
@@ -96,11 +99,11 @@ public class EstadoJogo  {
     }
 
     // Getters e Setters
-    public RickAndMortyCharacterDTO getPersonagem() {
+    public Personagem getPersonagem() {
         return personagem;
     }
 
-    public void setPersonagem(RickAndMortyCharacterDTO personagem) {
+    public void setPersonagem(Personagem personagem) {
         this.personagem = personagem;
     }
 
